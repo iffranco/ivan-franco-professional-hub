@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ivan Franco Portfolio</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050a0e;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent: #00dc82;
+            --accent-glow: rgba(0, 220, 130, 0.2);
+            --text-main: #ffffff;
+            --text-dim: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        /* --- LOGIN SCREEN --- */
+        #login-screen {
+            position: fixed; inset: 0; background: #050a0e; z-index: 9999;
+            display: flex; justify-content: center; align-items: center; padding: 20px;
+        }
+        .login-box {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            padding: 40px; border-radius: 24px; width: 100%; max-width: 450px;
+            backdrop-filter: blur(20px); text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .login-box h2 { color: var(--accent); margin-bottom: 25px; font-weight: 800; font-size: 1.8rem; }
+        .login-box input {
+            width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 12px;
+            border: 1px solid var(--card-border); background: rgba(255,255,255,0.05);
+            color: white; outline: none; font-size: 1rem;
+        }
+        .login-box button {
+            width: 100%; padding: 14px; border-radius: 12px; border: none;
+            background: var(--accent); color: #000; font-weight: 800; font-size: 1rem;
+            cursor: pointer; transition: 0.3s;
+        }
+        #error-msg { color: #ff4d4d; font-size: 0.9rem; margin-top: 15px; display: none; font-weight: 600; }
+
+        /* --- MAIN APP --- */
+        #main-content { display: none; width: 100%; justify-content: center; }
+
+        body {
+            background-color: var(--bg); color: var(--text-main); min-height: 100vh;
+            display: flex; justify-content: center; align-items: center; padding: 20px;
+            background-image: radial-gradient(circle at top right, var(--accent-glow), transparent 40%);
+        }
+
+        .app-shell {
+            width: 100%; max-width: 1150px; background: var(--card-bg);
+            backdrop-filter: blur(25px); border: 1px solid var(--card-border);
+            border-radius: 32px; display: flex; flex-direction: column;
+            position: relative; overflow: hidden; box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+        }
+
+        header { padding: 40px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
+        .header-info h1 { font-size: 2.5rem; font-weight: 800; }
+        
+        .btn-logout { background: transparent; border: 1px solid var(--card-border); color: var(--text-dim); padding: 8px 16px; border-radius: 10px; cursor: pointer; font-size: 0.8rem; transition: 0.3s; }
+        .btn-logout:hover { border-color: #ff4d4d; color: #ff4d4d; }
+
+        .nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; padding: 40px; }
+        .nav-card {
+            background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border);
+            padding: 30px; border-radius: 24px; cursor: pointer; display: flex;
+            flex-direction: column; align-items: flex-start; gap: 15px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .nav-card:hover { border-color: var(--accent); transform: translateY(-10px); background: rgba(255, 255, 255, 0.05); }
+
+        .icon-box { width: 50px; height: 50px; background: rgba(0, 220, 130, 0.1); border-radius: 14px; display: flex; justify-content: center; align-items: center; color: var(--accent); }
+        .pulse { animation: pulse-animation 2s infinite; }
+        @keyframes pulse-animation { 0% { box-shadow: 0 0 0 0px rgba(0, 220, 130, 0.4); } 100% { box-shadow: 0 0 0 15px rgba(0, 220, 130, 0); } }
+
+        /* --- OVERLAY & ACCORDION --- */
+        .overlay {
+            position: absolute; inset: 0; background: #080e12; z-index: 100;
+            padding: 40px; transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto;
+        }
+        .overlay.active { transform: translateY(0); }
+        
+        .fade-in-up { animation: fadeInUp 0.5s ease forwards; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .accordion-item { background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 15px; margin-bottom: 10px; overflow: hidden; }
+        .accordion-header { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+        .accordion-content { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; color: var(--text-dim); }
+        .accordion-item.active .accordion-content { max-height: 500px; padding: 0 20px 20px 20px; }
+        .accordion-item.active { border-color: var(--accent); }
+
+        .skill-tag { display: inline-block; background: rgba(0, 220, 130, 0.1); color: var(--accent); padding: 8px 16px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; margin: 5px; border: 1px solid rgba(0, 220, 130, 0.2); }
+        footer { padding: 20px; border-top: 1px solid var(--card-border); text-align: center; font-size: 0.8rem; color: var(--text-dim); }
+
+        /* --- PRINT ENHANCEMENTS --- */
+        @media print {
+            body { background: white !important; color: black !important; }
+            .app-shell { background: white !important; border: none !important; position: static !important; }
+            #login-screen, .nav-grid, .btn-back, footer, .overlay, .btn-logout { display: none !important; }
+            #print-area { display: block !important; padding: 20px; }
+            .print-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 30px; }
+            .confidential-tag { color: #ff4d4d; font-weight: 800; border: 2px solid #ff4d4d; padding: 5px 10px; text-transform: uppercase; }
+        }
+        #print-area { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <i data-lucide="shield-check" style="color: var(--accent); margin-bottom: 15px; width: 48px; height: 48px;"></i>
+            <h2>Ivan Franco Portfolio</h2>
+            <input type="text" id="username" placeholder="Username" autocomplete="off">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="checkAuth()">Authenticate</button>
+            <p id="error-msg">Verification failed.</p>
+        </div>
+    </div>
+
+    <main id="main-content" class="app-shell">
+        <header>
+            <div class="header-info">
+                <h1>Ivan F. Franco</h1>
+                <p>Senior IT Auditor | GRC and Data Specialist</p>
+            </div>
+            <button class="btn-logout" onclick="logout()">Logout</button>
+        </header>
+
+        <nav class="nav-grid">
+            <div class="nav-card" onclick="openSection('overview')"><div class="icon-box pulse"><i data-lucide="user"></i></div><h3>Overview</h3><p>Vision</p></div>
+            <div class="nav-card" onclick="openSection('exp')"><div class="icon-box"><i data-lucide="briefcase"></i></div><h3>Experience</h3><p>Career</p></div>
+            <div class="nav-card" onclick="openSection('tech')"><div class="icon-box"><i data-lucide="cpu"></i></div><h3>Tech Stack</h3><p>Skills</p></div>
+            <div class="nav-card" onclick="openSection('personal')"><div class="icon-box"><i data-lucide="heart"></i></div><h3>Personal</h3><p>Passions</p></div>
+            <div class="nav-card" onclick="openSection('contact')"><div class="icon-box"><i data-lucide="send"></i></div><h3>Contact</h3><p>Connect</p></div>
+            <div class="nav-card" onclick="window.print()"><div class="icon-box"><i data-lucide="download"></i></div><h3>Export</h3><p>Audit Ready PDF</p></div>
+        </nav>
+
+        <div id="overlay" class="overlay">
+            <button class="btn-back" onclick="closeSection()"><i data-lucide="arrow-left"></i> Back</button>
+            <div id="fade-wrapper">
+                <h2 id="viewTitle" style="color: var(--accent); font-size: 2.5rem; margin-bottom: 30px;"></h2>
+                <div id="viewContent"></div>
+            </div>
+        </div>
+
+        <div id="print-area">
+            <div class="print-header">
+                <div><h1>Ivan F. Franco</h1><p>IT Audit Professional Portfolio</p></div>
+                <div class="confidential-tag">Confidential</div>
+            </div>
+            <div id="print-content"></div>
+            <p style="margin-top: 40px; font-size: 0.8rem;">Generated on: <span id="print-date"></span></p>
+        </div>
+
+        <footer>© 2026 | Ivan Franco</footer>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        function checkAuth() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            if (btoa(u) === "dXNlcl9iaWwwMQ==" && btoa(p) === "QjcjazkhdlA=") {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'flex';
+                lucide.createIcons();
+            } else { document.getElementById('error-msg').style.display = 'block'; }
+        }
+
+        function logout() {
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        document.addEventListener('keypress', (e) => { if(e.key === 'Enter') checkAuth(); });
+
+        const data = {
+            overview: `<div class="fade-in-up"><strong>Strategic Insight</strong><p>Specialized in bridging technical infrastructure with auditing standards.</p></div>`,
+            exp: `
+                <div class="fade-in-up">
+                    <div class="accordion-item active" onclick="toggleAcc(this)">
+                        <div class="accordion-header"><span>2025 – Present | Marqeta</span><i data-lucide="chevron-down"></i></div>
+                        <div class="accordion-content"><p>Senior IT Auditor. Leading Python based automations for JIRA and Snowflake.</p></div>
+                    </div>
+                    <div class="accordion-item" onclick="toggleAcc(this)">
+                        <div class="accordion-header"><span>2024 – 2025 | Luxoft (UBS)</span><i data-lucide="chevron-down"></i></div>
+                        <div class="accordion-content"><p>Senior Risk Specialist. DORA framework and Global Vendor Assessments.</p></div>
+                    </div>
+                    <div class="accordion-item" onclick="toggleAcc(this)">
+                        <div class="accordion-header"><span>2022 – 2024 | Serasa Experian</span><i data-lucide="chevron-down"></i></div>
+                        <div class="accordion-content"><p>IT Audit Manager. Data driven execution via Tableau.</p></div>
+                    </div>
+                </div>`,
+            tech: `<div class="fade-in-up"><span class="skill-tag">Python</span><span class="skill-tag">SQL</span><span class="skill-tag">GRC</span><span class="skill-tag">NIST</span></div>`,
+            personal: `<div class="fade-in-up"><strong>Family First</strong><p>Gaming with my son is my favorite way to connect.</p></div>`,
+            contact: `<div class="fade-in-up"><strong>Email</strong><p>iffranco@hotmail.com</p></div>`
+        };
+
+        function toggleAcc(el) {
+            el.classList.toggle('active');
+            setTimeout(() => lucide.createIcons(), 10);
+        }
+
+        function openSection(id) {
+            const wrapper = document.getElementById('fade-wrapper');
+            wrapper.classList.remove('fade-in-up');
+            void wrapper.offsetWidth; 
+            document.getElementById('viewTitle').innerText = id.toUpperCase();
+            document.getElementById('viewContent').innerHTML = data[id];
+            document.getElementById('overlay').classList.add('active');
+            wrapper.classList.add('fade-in-up');
+            setTimeout(() => lucide.createIcons(), 50);
+        }
+
+        function closeSection() { document.getElementById('overlay').classList.remove('active'); }
+
+        // Prep Print
+        window.onbeforeprint = () => {
+            document.getElementById('print-date').innerText = new Date().toLocaleDateString();
+            document.getElementById('print-content').innerHTML = data.overview + data.exp + data.tech;
+        };
+    </script>
+</body>
+</html>
