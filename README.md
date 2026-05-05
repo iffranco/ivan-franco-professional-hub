@@ -4,8 +4,8 @@ Welcome to my interactive professional repository. This project serves as a live
 
 ## 🌐 Live Access
 The portfolio is hosted via GitHub Pages and can be accessed at:
-[INSERT YOUR LINK HERE, e.g., https://ivanfranco.github.io/portfolio]
-
+[[INSERT YOUR LINK HERE, e.g., https://ivanfranco.github.io/portfolio]
+]
 > Note: Access is restricted to simulate corporate security protocols. Please use the credentials provided during the application process or in my CV.
 
 ## 🎯 Project Purpose
