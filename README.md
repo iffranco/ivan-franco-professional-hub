@@ -4,9 +4,8 @@ Welcome to my interactive professional repository. This project serves as a live
 
 ## 🌐 Live Access
 The portfolio is hosted via GitHub Pages and can be accessed at:
-[[INSERT YOUR LINK HERE, e.g., https://ivanfranco.github.io/portfolio]
-]
-> Note: Access is restricted to simulate corporate security protocols. Please use the credentials provided during the application process or in my CV.
+https://iffranco.github.io/ivan-franco-professional-hub/
+> Note: Access is restricted. Please use the credentials provided during the application process or in my CV.
 
 ## 🎯 Project Purpose
 As a Senior IT Auditor, I believe that technical compliance and automation should be transparent and efficient. This portfolio was built to:
